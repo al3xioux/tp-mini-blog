@@ -222,12 +222,17 @@
 			<h1 class="post-title">{{ post.title }}</h1>
 			<div class="post-meta">
 				{% if post.publishedAt %}
-					<span>{{ post.publishedAt|date('d/m/Y à H:i') }}</span>
+					<span>📅
+						{{ post.publishedAt|date('d/m/Y à H:i') }}</span>
 				{% endif %}
 				{% if post.author %}
-					<span>Par
+					<span>✍️ Par
 						{{ post.author.firstName }}
 						{{ post.author.lastName }}</span>
+				{% endif %}
+				{% if post.category %}
+					<span>🏷️
+						{{ post.category.name }}</span>
 				{% endif %}
 			</div>
 		</div>
@@ -250,40 +255,6 @@
 				Commentaires ({{ comments|length }})
 			</h2>
 
-			{# Formulaire de commentaire pour les utilisateurs connectés #}
-			{% if app.user %}
-				<div class="comment-form-container">
-					<h3>Laisser un commentaire</h3>
-
-					{% for message in app.flashes('success') %}
-						<div class="alert-success">
-							{{ message }}
-						</div>
-					{% endfor %}
-
-					{{ form_start(commentForm) }}
-					<div class="form-group">
-						{{ form_widget(commentForm.content, {'attr': {'class': 'comment-textarea', 'rows': 4}}) }}
-						{{ form_errors(commentForm.content) }}
-					</div>
-					<button type="submit" class="btn-submit-comment">
-						Publier mon commentaire
-					</button>
-					<p class="comment-notice">
-						<small>Votre commentaire sera visible après validation par un administrateur.</small>
-					</p>
-					{{ form_end(commentForm) }}
-				</div>
-			{% else %}
-				<div class="login-to-comment">
-					<p>
-						<a href="{{ path('app_login') }}">Connectez-vous</a>
-						pour laisser un commentaire
-					</p>
-				</div>
-			{% endif %}
-
-			{# Liste des commentaires approuvés #}
 			{% if comments %}
 				<div class="comments-list">
 					{% for comment in comments %}
@@ -311,6 +282,39 @@
 			{% else %}
 				<div class="no-comments">
 					<p>Aucun commentaire pour le moment. Soyez le premier à commenter !</p>
+				</div>
+			{% endif %}
+
+			{# Formulaire de commentaire pour les utilisateurs connectés #}
+			{% if app.user %}
+				<div class="comment-form-container" style="margin-top: 2rem;">
+					<h3>Laisser un commentaire</h3>
+
+					{% for message in app.flashes('success') %}
+						<div class="alert-success">
+							{{ message }}
+						</div>
+					{% endfor %}
+
+					{{ form_start(commentForm) }}
+					<div class="form-group">
+						{{ form_widget(commentForm.content, {'attr': {'class': 'comment-textarea', 'rows': 4}}) }}
+						{{ form_errors(commentForm.content) }}
+					</div>
+					<button type="submit" class="btn-submit-comment">
+						Publier mon commentaire
+					</button>
+					<p class="comment-notice">
+						<small>Votre commentaire sera visible après validation par un administrateur.</small>
+					</p>
+					{{ form_end(commentForm) }}
+				</div>
+			{% else %}
+				<div class="login-to-comment" style="margin-top: 2rem;">
+					<p>
+						<a href="{{ path('app_login') }}">Connectez-vous</a>
+						pour laisser un commentaire
+					</p>
 				</div>
 			{% endif %}
 		</div>

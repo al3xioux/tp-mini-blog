@@ -64,12 +64,8 @@ php bin/console doctrine:fixtures:load
 
 6. **Lancer le serveur de développement**
 ```bash
-symfony server:start
-# ou
-php -S localhost:8000 -t public/
+symfony serve
 ```
-
-L'application sera accessible sur `http://localhost:8000`
 
 ## 🗄️ Structure de la base de données
 

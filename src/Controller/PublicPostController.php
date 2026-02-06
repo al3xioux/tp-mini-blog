@@ -30,10 +30,8 @@ final class PublicPostController extends AbstractController
         EntityManagerInterface $entityManager,
         CommentRepository $commentRepository
     ): Response {
-        // Récupérer les commentaires approuvés
         $comments = $commentRepository->findApprovedByPost($post->getId());
 
-        // Formulaire de commentaire pour les utilisateurs connectés
         $comment = new Comment();
         $form = null;
 

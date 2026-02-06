@@ -99,6 +99,12 @@
 		<div class="login-card">
 			<h1 class="login-title">Connexion</h1>
 
+			{% for message in app.flashes('success') %}
+				<div class="alert" style="background: #e8f5e9; color: #1a1a1a; border-color: #4caf50;">
+					{{ message }}
+				</div>
+			{% endfor %}
+
 			{% if error %}
 				<div class="alert alert-danger">
 					{{ error.messageKey|trans(error.messageData, 'security') }}
@@ -133,6 +139,9 @@
 			</form>
 
 			<div class="back-home">
+				<p>
+					<a href="{{ path('app_register') }}">Pas encore de compte ? Créer un compte</a>
+				</p>
 				<a href="{{ path('app_home') }}">← Retour à l'accueil</a>
 			</div>
 		</div>

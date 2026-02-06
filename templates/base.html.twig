@@ -19,7 +19,7 @@
 					font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 					line-height: 1.6;
 					color: #1a1a1a;
-					background: #ffffff;
+					background: #f5f5dc;
 				}
 
 				header {
@@ -155,6 +155,9 @@
 							Déconnexion
 						</a>
 					{% else %}
+						<a href="{{ path('app_register') }}" class="btn btn-secondary">
+							Créer un compte
+						</a>
 						<a href="{{ path('app_login') }}" class="btn btn-primary">
 							Connexion
 						</a>
