@@ -1,0 +1,75 @@
+<style>
+	.form-group {
+		margin-bottom: 1.5rem;
+	}
+	.form-group label {
+		display: block;
+		margin-bottom: 0.5rem;
+		color: #1a1a1a;
+		font-weight: 600;
+	}
+	.form-control {
+		width: 100%;
+		padding: 0.75rem;
+		border: 1px solid #1a1a1a;
+		background: white;
+		color: #1a1a1a;
+		font-size: 1rem;
+		font-family: inherit;
+	}
+	.form-control:focus {
+		outline: none;
+		background: #f8f8f8;
+	}
+	textarea.form-control {
+		min-height: 300px;
+		resize: vertical;
+	}
+	.btn-submit {
+		width: 100%;
+		padding: 1rem;
+		background: #1a1a1a;
+		color: white;
+		border: 1px solid #1a1a1a;
+		font-size: 1rem;
+		font-weight: 600;
+		cursor: pointer;
+	}
+	.btn-submit:hover {
+		background: white;
+		color: #1a1a1a;
+	}
+	.form-error {
+		color: #666;
+		font-size: 0.9rem;
+		margin-top: 0.25rem;
+	}
+</style>
+
+{{ form_start(form) }}
+<div class="form-group">
+	{{ form_label(form.title, 'Titre de l\'article') }}
+        {{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'Titre de votre article'}}) }}
+        {{ form_errors(form.title) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.content, 'Contenu') }}
+        {{ form_widget(form.content, {'attr': {'class': 'form-control', 'placeholder': 'Contenu de votre article'}}) }}
+        {{ form_errors(form.content) }}
+    </div>
+
+    {% if form.publishedAt is defined %}
+        <div class="form-group">
+            {{ form_label(form.publishedAt, 'Date de publication') }}
+            {{ form_widget(form.publishedAt, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.publishedAt) }}
+        </div>
+    {% endif %}
+
+    {% if form.picture is defined %}
+        <div class="form-group">
+            {{ form_label(form.picture, 'Image (URL)') }}
+            {{ form_widget(form.picture, {'attr': {'class': 'form-control', 'placeholder': 'URL de l\'image'}}) }}
+	{{ form_errors(form.picture) }}
+</div>{% endif %}{{ form_rest(form) }}<button class="btn-submit" type="submit">{{ button_label|default('Enregistrer') }}</button>{{ form_end(form) }}

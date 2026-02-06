@@ -1,0 +1,143 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des articles - Mini Blog
+{% endblock %}
+
+{% block body %}
+	<style>
+		.admin-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 2rem;
+			padding-bottom: 1rem;
+			border-bottom: 2px solid #1a1a1a;
+		}
+		.admin-header h1 {
+			font-size: 2rem;
+			color: #1a1a1a;
+			font-weight: 700;
+		}
+		.btn-new {
+			background: #1a1a1a;
+			color: white;
+			padding: 0.75rem 1.5rem;
+			border: 1px solid #1a1a1a;
+			text-decoration: none;
+			font-weight: 500;
+		}
+		.btn-new:hover {
+			background: white;
+			color: #1a1a1a;
+		}
+		.posts-table {
+			background: white;
+			border: 1px solid #1a1a1a;
+			overflow: hidden;
+		}
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+		thead {
+			background: #1a1a1a;
+			color: white;
+		}
+		thead th {
+			padding: 1rem;
+			text-align: left;
+			font-weight: 600;
+		}
+		tbody tr {
+			border-bottom: 1px solid #e0e0e0;
+		}
+		tbody tr:last-child {
+			border-bottom: none;
+		}
+		tbody tr:hover {
+			background: #f8f8f8;
+		}
+		tbody td {
+			padding: 1rem;
+			color: #333;
+		}
+		.post-content-preview {
+			max-width: 300px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		.actions {
+			display: flex;
+			gap: 0.5rem;
+		}
+		.btn-action {
+			padding: 0.4rem 0.8rem;
+			border: 1px solid #1a1a1a;
+			text-decoration: none;
+			font-size: 0.85rem;
+			background: white;
+			color: #1a1a1a;
+		}
+		.btn-action:hover {
+			background: #1a1a1a;
+			color: white;
+		}
+		.no-posts {
+			text-align: center;
+			padding: 3rem;
+			color: #666;
+		}
+	</style>
+
+	<div class="admin-header">
+		<h1>Gestion des articles</h1>
+		<a href="{{ path('app_post_new') }}" class="btn-new">
+			Nouvel article
+		</a>
+	</div>
+
+	<div class="posts-table">
+		{% if posts %}
+			<table>
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Titre</th>
+						<th>Contenu</th>
+						<th>Date de publication</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for post in posts %}
+						<tr>
+							<td>{{ post.id }}</td>
+							<td>
+								<strong>{{ post.title }}</strong>
+							</td>
+							<td>
+								<div class="post-content-preview">
+									{{ post.content|slice(0, 100) }}
+									{% if post.content|length > 100 %}...
+									{% endif %}
+								</div>
+							</td>
+							<td>{{ post.publishedAt ? post.publishedAt|date('d/m/Y H:i') : 'Non publié' }}</td>
+							<td>
+								<div class="actions">
+									<a href="{{ path('app_public_post_show', {'id': post.id}) }}" class="btn-action">Voir</a>
+									<a href="{{ path('app_post_edit', {'id': post.id}) }}" class="btn-action">Modifier</a>
+								</div>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% else %}
+			<div class="no-posts">
+				<p>Aucun article pour le moment.</p>
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}

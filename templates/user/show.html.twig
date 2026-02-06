@@ -1,0 +1,218 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	{{ user.firstName }}
+	{{ user.lastName }}
+	- Mini Blog
+{% endblock %}
+
+{% block body %}
+	<style>
+		.user-container {
+			max-width: 800px;
+			margin: 0 auto;
+		}
+		.user-header {
+			display: flex;
+			align-items: center;
+			gap: 2rem;
+			margin-bottom: 2rem;
+			padding: 2rem;
+			background: white;
+			border-radius: 10px;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+		}
+		.user-avatar {
+			width: 100px;
+			height: 100px;
+			border-radius: 50%;
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 2.5rem;
+			color: white;
+			font-weight: bold;
+		}
+		.user-header-info h1 {
+			font-size: 2rem;
+			color: #333;
+			margin-bottom: 0.5rem;
+		}
+		.user-header-info .user-email {
+			color: #666;
+			font-size: 1.1rem;
+		}
+		.user-details {
+			background: white;
+			padding: 2rem;
+			border-radius: 10px;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+			margin-bottom: 2rem;
+		}
+		.detail-row {
+			display: flex;
+			padding: 1rem 0;
+			border-bottom: 1px solid #f0f0f0;
+		}
+		.detail-row:last-child {
+			border-bottom: none;
+		}
+		.detail-label {
+			font-weight: 600;
+			color: #555;
+			width: 200px;
+			flex-shrink: 0;
+		}
+		.detail-value {
+			color: #333;
+			flex: 1;
+		}
+		.badge {
+			display: inline-block;
+			padding: 0.3rem 0.8rem;
+			border-radius: 20px;
+			font-size: 0.85rem;
+			font-weight: 600;
+			margin-right: 0.3rem;
+		}
+		.badge-admin {
+			background: #fef3c7;
+			color: #92400e;
+		}
+		.badge-user {
+			background: #dbeafe;
+			color: #1e40af;
+		}
+		.status-badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.4rem;
+			padding: 0.4rem 0.8rem;
+			border-radius: 20px;
+			font-size: 0.9rem;
+			font-weight: 600;
+		}
+		.status-active {
+			background: #d1fae5;
+			color: #065f46;
+		}
+		.status-inactive {
+			background: #fee2e2;
+			color: #991b1b;
+		}
+		.actions {
+			display: flex;
+			gap: 1rem;
+			margin-top: 2rem;
+		}
+		.btn {
+			padding: 0.75rem 1.5rem;
+			border-radius: 8px;
+			text-decoration: none;
+			font-weight: 600;
+			transition: all 0.2s;
+		}
+		.btn-back {
+			background: #e5e7eb;
+			color: #374151;
+		}
+		.btn-back:hover {
+			background: #d1d5db;
+		}
+		.back-link {
+			display: inline-block;
+			margin-top: 1.5rem;
+			color: #667eea;
+			text-decoration: none;
+		}
+		.back-link:hover {
+			text-decoration: underline;
+		}
+	</style>
+
+	<div class="user-container">
+		<div class="user-header">
+			<div class="user-avatar">
+				{{ user.firstName|first|upper }}{{ user.lastName|first|upper }}
+			</div>
+			<div class="user-header-info">
+				<h1>{{ user.firstName }}
+					{{ user.lastName }}</h1>
+				<div class="user-email">{{ user.email }}</div>
+			</div>
+		</div>
+
+		<div class="user-details">
+			<div class="detail-row">
+				<div class="detail-label">ID</div>
+				<div class="detail-value">#{{ user.id }}</div>
+			</div>
+
+			<div class="detail-row">
+				<div class="detail-label">Statut</div>
+				<div class="detail-value">
+					{% if user.isActive %}
+						<span class="status-badge status-active">
+							✓ Actif
+						</span>
+					{% else %}
+						<span class="status-badge status-inactive">
+							✕ Désactivé
+						</span>
+					{% endif %}
+				</div>
+			</div>
+
+			<div class="detail-row">
+				<div class="detail-label">Rôles</div>
+				<div class="detail-value">
+					{% for role in user.roles %}
+						{% if role == 'ROLE_ADMIN' %}
+							<span class="badge badge-admin">👑 Admin</span>
+						{% elseif role == 'ROLE_USER' %}
+							<span class="badge badge-user">👤 User</span>
+						{% else %}
+							<span class="badge badge-user">{{ role }}</span>
+						{% endif %}
+					{% endfor %}
+				</div>
+			</div>
+
+			<div class="detail-row">
+				<div class="detail-label">Prénom</div>
+				<div class="detail-value">{{ user.firstName }}</div>
+			</div>
+
+			<div class="detail-row">
+				<div class="detail-label">Nom</div>
+				<div class="detail-value">{{ user.lastName }}</div>
+			</div>
+
+			<div class="detail-row">
+				<div class="detail-label">Email</div>
+				<div class="detail-value">{{ user.email }}</div>
+			</div>
+
+			<div class="detail-row">
+				<div class="detail-label">Date d'inscription</div>
+				<div class="detail-value">
+					{{ user.createdAt ? user.createdAt|date('d/m/Y à H:i') : 'N/A' }}
+				</div>
+			</div>
+
+			{% if user.updatedAt %}
+				<div class="detail-row">
+					<div class="detail-label">Dernière mise à jour</div>
+					<div class="detail-value">
+						{{ user.updatedAt|date('d/m/Y à H:i') }}
+					</div>
+				</div>
+			{% endif %}
+		</div>
+
+		<a href="{{ path('app_user_index') }}" class="back-link">
+			← Retour à la liste des utilisateurs
+		</a>
+	</div>
+{% endblock %}

@@ -1,0 +1,344 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des commentaires - Mini Blog
+{% endblock %}
+
+{% block body %}
+	<style>
+		.admin-header {
+			margin-bottom: 2rem;
+			padding-bottom: 1rem;
+			border-bottom: 3px solid #1a1a1a;
+		}
+		.admin-header h1 {
+			font-size: 2rem;
+			color: #1a1a1a;
+			font-weight: 700;
+		}
+		.stats {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 1.5rem;
+			margin-bottom: 2rem;
+		}
+		.stat-card {
+			background: white;
+			padding: 1.5rem;
+			border: 1px solid #1a1a1a;
+		}
+		.stat-card h3 {
+			font-size: 0.9rem;
+			color: #666;
+			margin-bottom: 0.5rem;
+			text-transform: uppercase;
+			font-weight: 600;
+		}
+		.stat-card .stat-value {
+			font-size: 2rem;
+			font-weight: bold;
+			color: #1a1a1a;
+		}
+		.section-title {
+			font-size: 1.5rem;
+			color: #1a1a1a;
+			margin: 2rem 0 1rem;
+			padding-bottom: 0.5rem;
+			border-bottom: 2px solid #1a1a1a;
+			font-weight: 700;
+		}
+		.comments-grid {
+			display: grid;
+			gap: 1.5rem;
+		}
+		.comment-card {
+			background: white;
+			border: 1px solid #1a1a1a;
+			overflow: hidden;
+		}
+		.comment-card.pending {
+			border-left: 3px solid #1a1a1a;
+		}
+		.comment-card.approved {
+			border-left: 3px solid #666;
+		}
+		.comment-card.rejected {
+			border-left: 3px solid #e0e0e0;
+		}
+		.comment-header {
+			background: #f8f8f8;
+			padding: 1rem 1.5rem;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			border-bottom: 1px solid #e0e0e0;
+		}
+		.comment-meta {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+		}
+		.user-avatar {
+			width: 40px;
+			height: 40px;
+			background: #1a1a1a;
+			color: white;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: bold;
+			font-size: 0.9rem;
+		}
+		.user-info strong {
+			display: block;
+			color: #1a1a1a;
+			font-weight: 700;
+		}
+		.user-info small {
+			color: #666;
+			font-size: 0.85rem;
+		}
+		.status-badge {
+			padding: 0.3rem 0.8rem;
+			font-size: 0.85rem;
+			font-weight: 500;
+			border: 1px solid;
+		}
+		.status-pending {
+			background: white;
+			color: #1a1a1a;
+			border-color: #1a1a1a;
+		}
+		.status-approved {
+			background: #1a1a1a;
+			color: white;
+			border-color: #1a1a1a;
+		}
+		.status-rejected {
+			background: #f8f8f8;
+			color: #666;
+			border-color: #666;
+		}
+		.comment-body {
+			padding: 1.5rem;
+		}
+		.post-reference {
+			background: #f8f8f8;
+			padding: 0.75rem 1rem;
+			margin-bottom: 1rem;
+			font-size: 0.9rem;
+			border-left: 3px solid #1a1a1a;
+		}
+		.post-reference strong {
+			color: #1a1a1a;
+			font-weight: 700;
+		}
+		.comment-content {
+			color: #333;
+			line-height: 1.6;
+		}
+		.comment-actions {
+			display: flex;
+			gap: 0.75rem;
+			padding: 1rem 1.5rem;
+			background: #f8f8f8;
+			border-top: 1px solid #e0e0e0;
+		}
+		.btn-action {
+			padding: 0.5rem 1rem;
+			border: 1px solid;
+			font-size: 0.9rem;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.2s;
+			background: white;
+		}
+		.btn-approve {
+			color: #1a1a1a;
+			border-color: #1a1a1a;
+		}
+		.btn-approve:hover {
+			background: #1a1a1a;
+			color: white;
+		}
+		.btn-reject {
+			color: #666;
+			border-color: #666;
+		}
+		.btn-reject:hover {
+			background: #666;
+			color: white;
+		}
+		.btn-delete {
+			color: #999;
+			border-color: #999;
+		}
+		.btn-delete:hover {
+			background: #999;
+			color: white;
+		}
+		.no-comments {
+			text-align: center;
+			padding: 3rem;
+			color: #666;
+			background: white;
+			border: 2px solid #e0e0e0;
+		}
+		.alert {
+			padding: 1rem;
+			margin-bottom: 1.5rem;
+			border: 1px solid #1a1a1a;
+		}
+		.alert-success {
+			background: #1a1a1a;
+			color: white;
+		}
+		.alert-warning {
+			background: #f8f8f8;
+			color: #1a1a1a;
+		}
+	</style>
+
+	<div class="admin-header">
+		<h1>Gestion des commentaires</h1>
+	</div>
+
+	{% for message in app.flashes('success') %}
+		<div class="alert alert-success">
+			{{ message }}
+		</div>
+	{% endfor %}
+
+	{% for message in app.flashes('warning') %}
+		<div class="alert alert-warning">
+			{{ message }}
+		</div>
+	{% endfor %}
+
+	<div class="stats">
+		<div class="stat-card">
+			<h3>En attente</h3>
+			<div class="stat-value">{{ pendingComments|length }}</div>
+		</div>
+		<div class="stat-card">
+			<h3>Total</h3>
+			<div class="stat-value">{{ allComments|length }}</div>
+		</div>
+		<div class="stat-card">
+			<h3>Approuvés</h3>
+			<div class="stat-value">{{ allComments|filter(c => c.status == 'approved')|length }}</div>
+		</div>
+	</div>
+
+	{% if pendingComments %}
+		<h2 class="section-title">Commentaires en attente</h2>
+		<div class="comments-grid">
+			{% for comment in pendingComments %}
+				<div class="comment-card pending">
+					<div class="comment-header">
+						<div class="comment-meta">
+							<div class="user-avatar">
+								{{ comment.user.firstName|first|upper }}{{ comment.user.lastName|first|upper }}
+							</div>
+							<div class="user-info">
+								<strong>{{ comment.user.firstName }}
+									{{ comment.user.lastName }}</strong>
+								<small>{{ comment.createdAt|date('d/m/Y à H:i') }}</small>
+							</div>
+						</div>
+						<span class="status-badge status-pending">En attente</span>
+					</div>
+					<div class="comment-body">
+						<div class="post-reference">
+							Article :
+							<strong>{{ comment.post.title }}</strong>
+						</div>
+						<div class="comment-content">
+							{{ comment.content|nl2br }}
+						</div>
+					</div>
+					<div class="comment-actions">
+						<form method="post" action="{{ path('app_admin_comment_approve', {id: comment.id}) }}" style="display: inline;">
+							<button type="submit" class="btn-action btn-approve">
+								Approuver
+							</button>
+						</form>
+						<form method="post" action="{{ path('app_admin_comment_reject', {id: comment.id}) }}" style="display: inline;">
+							<button type="submit" class="btn-action btn-reject">
+								Rejeter
+							</button>
+						</form>
+						<form method="post" action="{{ path('app_admin_comment_delete', {id: comment.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?');" style="display: inline;">
+							<button type="submit" class="btn-action btn-delete">
+								Supprimer
+							</button>
+						</form>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	{% endif %}
+
+	<h2 class="section-title">Tous les commentaires</h2>
+	{% if allComments %}
+		<div class="comments-grid">
+			{% for comment in allComments %}
+				<div class="comment-card {{ comment.status }}">
+					<div class="comment-header">
+						<div class="comment-meta">
+							<div class="user-avatar">
+								{{ comment.user.firstName|first|upper }}{{ comment.user.lastName|first|upper }}
+							</div>
+							<div class="user-info">
+								<strong>{{ comment.user.firstName }}
+									{{ comment.user.lastName }}</strong>
+								<small>{{ comment.createdAt|date('d/m/Y à H:i') }}</small>
+							</div>
+						</div>
+						{% if comment.status == 'pending' %}
+							<span class="status-badge status-pending">En attente</span>
+						{% elseif comment.status == 'approved' %}
+							<span class="status-badge status-approved">Approuvé</span>
+						{% elseif comment.status == 'rejected' %}
+							<span class="status-badge status-rejected">Rejeté</span>
+						{% endif %}
+					</div>
+					<div class="comment-body">
+						<div class="post-reference">
+							Article :
+							<strong>{{ comment.post.title }}</strong>
+						</div>
+						<div class="comment-content">
+							{{ comment.content|nl2br }}
+						</div>
+					</div>
+					<div class="comment-actions">
+						{% if comment.status != 'approved' %}
+							<form method="post" action="{{ path('app_admin_comment_approve', {id: comment.id}) }}" style="display: inline;">
+								<button type="submit" class="btn-action btn-approve">
+									Approuver
+								</button>
+							</form>
+						{% endif %}
+						{% if comment.status != 'rejected' %}
+							<form method="post" action="{{ path('app_admin_comment_reject', {id: comment.id}) }}" style="display: inline;">
+								<button type="submit" class="btn-action btn-reject">
+									Rejeter
+								</button>
+							</form>
+						{% endif %}
+						<form method="post" action="{{ path('app_admin_comment_delete', {id: comment.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?');" style="display: inline;">
+							<button type="submit" class="btn-action btn-delete">
+								Supprimer
+							</button>
+						</form>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	{% else %}
+		<div class="no-comments">
+			<p>Aucun commentaire pour le moment.</p>
+		</div>
+	{% endif %}
+
+{% endblock %}

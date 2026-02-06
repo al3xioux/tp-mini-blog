@@ -1,0 +1,117 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Mini Blog
+{% endblock %}
+
+{% block body %}
+	<style>
+		.blog-header {
+			text-align: center;
+			margin-bottom: 4rem;
+			padding-bottom: 2rem;
+			border-bottom: 3px solid #1a1a1a;
+		}
+		.blog-header h1 {
+			font-size: 2.5rem;
+			color: #1a1a1a;
+			margin-bottom: 0.5rem;
+			font-weight: 700;
+		}
+		.blog-header p {
+			color: #666;
+			font-size: 1.1rem;
+		}
+		.articles-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+			gap: 2rem;
+		}
+		article {
+			background: white;
+			border: 1px solid #1a1a1a;
+			padding: 2rem;
+			transition: all 0.2s;
+		}
+		article:hover {
+			background: #1a1a1a;
+			color: white;
+		}
+		article:hover h2,
+		article:hover .post-meta,
+		article:hover p {
+			color: white;
+		}
+		article:hover .read-more {
+			background: white;
+			color: #1a1a1a;
+			border-color: white;
+		}
+		article h2 {
+			color: #1a1a1a;
+			margin-bottom: 1rem;
+			font-size: 1.5rem;
+			font-weight: 700;
+		}
+		article .post-meta {
+			color: #666;
+			font-size: 0.9rem;
+			margin-bottom: 1rem;
+		}
+		article p {
+			color: #333;
+			margin-bottom: 1.5rem;
+			line-height: 1.7;
+		}
+		article .read-more {
+			display: inline-block;
+			color: #1a1a1a;
+			text-decoration: none;
+			font-weight: 500;
+			padding: 0.5rem 1.5rem;
+			border: 1px solid #1a1a1a;
+			background: white;
+			transition: all 0.2s;
+		}
+		article .read-more:hover {
+			background: #1a1a1a;
+			color: white;
+		}
+		.no-posts {
+			text-align: center;
+			padding: 4rem 2rem;
+			color: #666;
+			font-size: 1.2rem;
+			border: 1px solid #e0e0e0;
+			background: #f8f8f8;
+		}
+	</style>
+
+	<div class="blog-header">
+		<h1>Bienvenue sur le Mini Blog</h1>
+		<p>Découvrez nos derniers articles</p>
+	</div>
+
+	<div class="articles-grid">
+		{% for post in posts %}
+			<article>
+				<h2>{{ post.title }}</h2>
+				{% if post.publishedAt %}
+					<div class="post-meta">
+						{{ post.publishedAt|date('d/m/Y') }}
+					</div>
+				{% endif %}
+				<p>{{ post.content|slice(0, 200) }}
+					{% if post.content|length > 200 %}...
+					{% endif %}
+				</p>
+				<a href="{{ path('app_public_post_show', {id: post.id}) }}" class="read-more">
+					Lire la suite
+				</a>
+			</article>
+		{% else %}
+			<div class="no-posts">
+				<p>Aucun article disponible pour le moment.</p>
+			</div>
+		{% endfor %}
+	</div>
+{% endblock %}

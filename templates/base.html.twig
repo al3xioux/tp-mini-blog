@@ -1,17 +1,170 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}Mini Blog
+			{% endblock %}
+		</title>
+		<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>📝</text></svg>">
+		{% block stylesheets %}
+			<style>
+				* {
+					margin: 0;
+					padding: 0;
+					box-sizing: border-box;
+				}
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+				body {
+					font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+					line-height: 1.6;
+					color: #1a1a1a;
+					background: #ffffff;
+				}
+
+				header {
+					background: #1a1a1a;
+					color: white;
+					padding: 1.5rem 0;
+					border-bottom: 3px solid #000;
+				}
+
+				.header-container {
+					max-width: 1200px;
+					margin: 0 auto;
+					padding: 0 2rem;
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					gap: 2rem;
+					flex-wrap: wrap;
+				}
+
+				.header-title {
+					font-size: 1.5rem;
+					font-weight: 700;
+				}
+
+				.header-title a {
+					color: white;
+					text-decoration: none;
+					transition: opacity 0.2s;
+				}
+
+				.header-title a:hover {
+					opacity: 0.8;
+				}
+
+				.header-nav {
+					display: flex;
+					gap: 0.75rem;
+					align-items: center;
+					flex-wrap: wrap;
+				}
+
+				.btn {
+					padding: 0.5rem 1rem;
+					text-decoration: none;
+					border: 1px solid;
+					cursor: pointer;
+					font-size: 0.9rem;
+					font-weight: 400;
+					background: transparent;
+				}
+
+				.btn-primary {
+					background: white;
+					color: #1a1a1a;
+					border-color: #1a1a1a;
+				}
+
+				.btn-primary:hover {
+					background: #1a1a1a;
+					color: white;
+				}
+
+				.btn-secondary {
+					background: transparent;
+					color: white;
+					border-color: white;
+				}
+
+				.btn-secondary:hover {
+					background: white;
+					color: #1a1a1a;
+				}
+
+				.btn-secondary.active {
+					background: #444;
+					border-color: #666;
+				}
+
+				.btn-primary.active {
+					background: #e0e0e0;
+					border-color: #999;
+				}
+
+				.user-info {
+					color: white;
+					font-size: 0.9rem;
+					padding: 0.5rem 1rem;
+				}
+
+				main {
+					max-width: 1200px;
+					margin: 3rem auto;
+					padding: 0 2rem;
+					min-height: 60vh;
+				}
+			</style>
+		{% endblock %}
+
+		{% block javascripts %}
+			{% block importmap %}
+				{{ importmap('app') }}
+			{% endblock %}
+		{% endblock %}
+	</head>
+	<body>
+		<header>
+			<div class="header-container">
+				<div class="header-title">
+					<a href="{{ path('app_home') }}">Mini Blog</a>
+				</div>
+				<nav class="header-nav">
+					{% if app.user %}
+						<span class="user-info">
+							{{ app.user.firstName }}
+							{{ app.user.lastName }}
+						</span>
+						{% if is_granted('ROLE_ADMIN') %}
+							<a href="{{ path('app_post_new') }}" class="btn btn-secondary {{ app.request.attributes.get('_route') == 'app_post_new' ? 'active' : '' }}">
+								Créer un article
+							</a>
+							<a href="{{ path('app_post_index') }}" class="btn btn-secondary {{ app.request.attributes.get('_route') starts with 'app_post' and app.request.attributes.get('_route') != 'app_post_new' ? 'active' : '' }}">
+								Articles
+							</a>
+							<a href="{{ path('app_user_index') }}" class="btn btn-secondary {{ app.request.attributes.get('_route') starts with 'app_user' ? 'active' : '' }}">
+								Utilisateurs
+							</a>
+							<a href="{{ path('app_admin_comment_index') }}" class="btn btn-secondary {{ app.request.attributes.get('_route') starts with 'app_admin_comment' ? 'active' : '' }}">
+								Commentaires
+							</a>
+						{% endif %}
+						<a href="{{ path('app_logout') }}" class="btn btn-secondary">
+							Déconnexion
+						</a>
+					{% else %}
+						<a href="{{ path('app_login') }}" class="btn btn-primary">
+							Connexion
+						</a>
+					{% endif %}
+				</nav>
+			</div>
+		</header>
+
+		<main>
+			{% block body %}{% endblock %}
+		</main>
+	</body>
 </html>

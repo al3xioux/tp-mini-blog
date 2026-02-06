@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier l'article - Mini Blog
+{% endblock %}
+
+{% block body %}
+	<style>
+		.form-container {
+			max-width: 800px;
+			margin: 0 auto;
+		}
+		.form-header {
+			margin-bottom: 2rem;
+			padding-bottom: 1rem;
+			border-bottom: 2px solid #1a1a1a;
+		}
+		.form-header h1 {
+			font-size: 2rem;
+			color: #1a1a1a;
+			font-weight: 700;
+		}
+		.form-card {
+			background: white;
+			padding: 2rem;
+			border: 1px solid #1a1a1a;
+		}
+		.back-link {
+			display: inline-block;
+			margin-top: 1.5rem;
+			color: #666;
+			text-decoration: none;
+		}
+		.back-link:hover {
+			color: #1a1a1a;
+			text-decoration: underline;
+		}
+		.danger-zone {
+			margin-top: 2rem;
+			padding: 1.5rem;
+			background: #f8f8f8;
+			border: 1px solid #e0e0e0;
+		}
+		.danger-zone h3 {
+			color: #1a1a1a;
+			margin-bottom: 1rem;
+			font-weight: 700;
+		}
+	</style>
+
+	<div class="form-container">
+		<div class="form-header">
+			<h1>Modifier l'article</h1>
+		</div>
+
+		<div class="form-card">
+			{{ include('post/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+		</div>
+
+		<div class="danger-zone">
+			<h3>Zone de suppression</h3>
+			{{ include('post/_delete_form.html.twig') }}
+		</div>
+
+		<a href="{{ path('app_post_index') }}" class="back-link">
+			← Retour à la liste
+		</a>
+	</div>
+{% endblock %}

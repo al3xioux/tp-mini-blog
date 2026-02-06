@@ -1,0 +1,322 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	{{ post.title }}
+	- Mini Blog
+{% endblock %}
+
+{% block body %}
+	<style>
+		.post-container {
+			max-width: 800px;
+			margin: 0 auto;
+		}
+		.post-header {
+			margin-bottom: 2rem;
+			padding-bottom: 1.5rem;
+			border-bottom: 3px solid #1a1a1a;
+		}
+		.post-title {
+			font-size: 2.5rem;
+			color: #1a1a1a;
+			margin-bottom: 1rem;
+			font-weight: 700;
+		}
+		.post-meta {
+			color: #666;
+			font-size: 0.95rem;
+			display: flex;
+			gap: 2rem;
+			flex-wrap: wrap;
+		}
+		.post-content {
+			background: white;
+			padding: 2rem;
+			border: 1px solid #1a1a1a;
+			line-height: 1.8;
+			font-size: 1.1rem;
+			color: #333;
+			margin-bottom: 2rem;
+		}
+		.post-content p {
+			margin-bottom: 1.5rem;
+		}
+		.back-link {
+			display: inline-block;
+			margin-top: 2rem;
+			color: #1a1a1a;
+			text-decoration: none;
+			font-weight: 500;
+			padding: 0.75rem 1.5rem;
+			border: 1px solid #1a1a1a;
+			background: white;
+			transition: all 0.2s;
+		}
+		.back-link:hover {
+			background: #1a1a1a;
+			color: white;
+		}
+		.admin-actions {
+			margin-top: 2rem;
+			padding: 1.5rem;
+			background: #f8f8f8;
+			border: 1px solid #e0e0e0;
+		}
+		.btn-edit {
+			background: #1a1a1a;
+			color: white;
+			padding: 0.75rem 1.5rem;
+			border: 1px solid #1a1a1a;
+			text-decoration: none;
+			transition: all 0.2s;
+			display: inline-block;
+			font-weight: 500;
+		}
+		.btn-edit:hover {
+			background: white;
+			color: #1a1a1a;
+		}
+
+		/* Section commentaires */
+		.comments-section {
+			margin-top: 3rem;
+			padding-top: 2rem;
+			border-top: 3px solid #1a1a1a;
+		}
+		.comments-title {
+			font-size: 1.8rem;
+			color: #1a1a1a;
+			margin-bottom: 2rem;
+			font-weight: 700;
+		}
+		.comment-form-container {
+			background: #f8f8f8;
+			padding: 2rem;
+			border: 1px solid #1a1a1a;
+			margin-bottom: 2rem;
+		}
+		.comment-form-container h3 {
+			color: #1a1a1a;
+			margin-bottom: 1rem;
+			font-weight: 700;
+		}
+		.comment-textarea {
+			width: 100%;
+			padding: 1rem;
+			border: 1px solid #1a1a1a;
+			background: white;
+			color: #1a1a1a;
+			font-size: 1rem;
+			font-family: inherit;
+			resize: vertical;
+		}
+		.comment-textarea:focus {
+			outline: none;
+			background: #f8f8f8;
+		}
+		.btn-submit-comment {
+			background: #1a1a1a;
+			color: white;
+			padding: 0.75rem 1.5rem;
+			border: 1px solid #1a1a1a;
+			font-size: 1rem;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.2s;
+			margin-top: 1rem;
+		}
+		.btn-submit-comment:hover {
+			background: white;
+			color: #1a1a1a;
+		}
+		.comment-notice {
+			margin-top: 0.5rem;
+			color: #666;
+			font-size: 0.9rem;
+		}
+		.login-to-comment {
+			background: #f8f8f8;
+			border: 1px solid #1a1a1a;
+			padding: 1.5rem;
+			text-align: center;
+			margin-bottom: 2rem;
+		}
+		.login-to-comment a {
+			color: #1a1a1a;
+			font-weight: 500;
+			text-decoration: none;
+			border-bottom: 1px solid #1a1a1a;
+		}
+		.login-to-comment a:hover {
+			opacity: 0.7;
+		}
+		.comments-list {
+			display: flex;
+			flex-direction: column;
+			gap: 1.5rem;
+		}
+		.comment-item {
+			background: white;
+			padding: 1.5rem;
+			border: 1px solid #1a1a1a;
+			border-left: 3px solid #1a1a1a;
+		}
+		.comment-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+			margin-bottom: 1rem;
+			padding-bottom: 0.75rem;
+			border-bottom: 1px solid #e0e0e0;
+		}
+		.comment-author {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+		}
+		.author-avatar {
+			width: 40px;
+			height: 40px;
+			background: #1a1a1a;
+			color: white;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: bold;
+			font-size: 0.9rem;
+		}
+		.author-info {
+			display: flex;
+			flex-direction: column;
+		}
+		.author-info strong {
+			color: #1a1a1a;
+			font-weight: 700;
+		}
+		.comment-date {
+			font-size: 0.85rem;
+			color: #666;
+		}
+		.comment-content {
+			color: #333;
+			line-height: 1.6;
+		}
+		.no-comments {
+			text-align: center;
+			padding: 2rem;
+			color: #666;
+			background: #f8f8f8;
+			border: 1px solid #e0e0e0;
+		}
+		.alert-success {
+			background: #1a1a1a;
+			color: white;
+			padding: 1rem;
+			margin-bottom: 1rem;
+			border: 1px solid #1a1a1a;
+		}
+	</style>
+
+	<div class="post-container">
+		<div class="post-header">
+			<h1 class="post-title">{{ post.title }}</h1>
+			<div class="post-meta">
+				{% if post.publishedAt %}
+					<span>{{ post.publishedAt|date('d/m/Y à H:i') }}</span>
+				{% endif %}
+				{% if post.author %}
+					<span>Par
+						{{ post.author.firstName }}
+						{{ post.author.lastName }}</span>
+				{% endif %}
+			</div>
+		</div>
+
+		<div class="post-content">
+			{{ post.content|nl2br }}
+		</div>
+
+		{% if is_granted('ROLE_ADMIN') %}
+			<div class="admin-actions">
+				<a href="{{ path('app_post_edit', {id: post.id}) }}" class="btn-edit">
+					Modifier cet article
+				</a>
+			</div>
+		{% endif %}
+
+		{# Section des commentaires #}
+		<div class="comments-section">
+			<h2 class="comments-title">
+				Commentaires ({{ comments|length }})
+			</h2>
+
+			{# Formulaire de commentaire pour les utilisateurs connectés #}
+			{% if app.user %}
+				<div class="comment-form-container">
+					<h3>Laisser un commentaire</h3>
+
+					{% for message in app.flashes('success') %}
+						<div class="alert-success">
+							{{ message }}
+						</div>
+					{% endfor %}
+
+					{{ form_start(commentForm) }}
+					<div class="form-group">
+						{{ form_widget(commentForm.content, {'attr': {'class': 'comment-textarea', 'rows': 4}}) }}
+						{{ form_errors(commentForm.content) }}
+					</div>
+					<button type="submit" class="btn-submit-comment">
+						Publier mon commentaire
+					</button>
+					<p class="comment-notice">
+						<small>Votre commentaire sera visible après validation par un administrateur.</small>
+					</p>
+					{{ form_end(commentForm) }}
+				</div>
+			{% else %}
+				<div class="login-to-comment">
+					<p>
+						<a href="{{ path('app_login') }}">Connectez-vous</a>
+						pour laisser un commentaire
+					</p>
+				</div>
+			{% endif %}
+
+			{# Liste des commentaires approuvés #}
+			{% if comments %}
+				<div class="comments-list">
+					{% for comment in comments %}
+						<div class="comment-item">
+							<div class="comment-header">
+								<div class="comment-author">
+									<div class="author-avatar">
+										{{ comment.user.firstName|first|upper }}{{ comment.user.lastName|first|upper }}
+									</div>
+									<div class="author-info">
+										<strong>{{ comment.user.firstName }}
+											{{ comment.user.lastName }}</strong>
+										<span class="comment-date">
+											{{ comment.createdAt|date('d/m/Y à H:i') }}
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="comment-content">
+								{{ comment.content|nl2br }}
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			{% else %}
+				<div class="no-comments">
+					<p>Aucun commentaire pour le moment. Soyez le premier à commenter !</p>
+				</div>
+			{% endif %}
+		</div>
+
+		<a href="{{ path('app_home') }}" class="back-link">
+			← Retour à l'accueil
+		</a>
+	</div>
+{% endblock %}
